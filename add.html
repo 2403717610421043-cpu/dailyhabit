@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Habit</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>➕ Add New Habit</h1>
+
+        <input
+            type="text"
+            id="habit"
+            placeholder="Enter Habit Name"
+        >
+
+        <br><br>
+
+        <button onclick="addHabit()">
+            Add Habit
+        </button>
+
+        <br><br>
+
+        <a href="index.html" class="back-link">
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+    <script>
+        async function addHabit() {
+
+            const habit_name =
+            document.getElementById("habit").value;
+
+            if(habit_name === ""){
+                alert("Please enter a habit name");
+                return;
+            }
+
+            await fetch("/habits", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    habit_name
+                })
+            });
+
+            window.location.href = "/";
+        }
+    </script>
+
+</body>
+</html>

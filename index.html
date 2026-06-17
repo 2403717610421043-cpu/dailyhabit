@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Habit Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>📅 Daily Habit Tracker</h1>
+
+        <a href="add.html" class="add-link">
+            + Add New Habit
+        </a>
+
+        <div id="habits"></div>
+    </div>
+
+    <script>
+        async function loadHabits() {
+            const res = await fetch("/habits");
+            const habits = await res.json();
+
+            let output = "";
+
+            habits.forEach(habit => {
+                output += `
+                <div class="habit-card">
+                    <h3>${habit.habit_name}</h3>
+
+                    <p>
+                        Status:
+                        ${
+                            habit.completed
+                            ? "<span class='completed'>✅ Completed</span>"
+                            : "<span class='pending'>❌ Pending</span>"
+                        }
+                    </p>
+
+                    <button onclick="completeHabit(${habit.id})">
+                        Complete
+                    </button>
+
+                    <button onclick="deleteHabit(${habit.id})">
+                        Delete
+                    </button>
+                </div>
+                `;
+            });
+
+            document.getElementById("habits").innerHTML = output;
+        }
+
+        async function completeHabit(id) {
+            await fetch(/habits/${id}, {
+                method: "PUT"
+            });
+
+            location.reload();
+        }
+
+        async function deleteHabit(id) {
+            await fetch(/habits/${id}, {
+                method: "DELETE"
+            });
+
+            location.reload();
+        }
+
+        loadHabits();
+    </script>
+
+</body>
+</html>

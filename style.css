@@ -1,0 +1,68 @@
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f4f4;
+    margin:0;
+}
+
+.container{
+    width:80%;
+    max-width:700px;
+    margin:30px auto;
+    text-align:center;
+}
+
+h1{
+    color:#333;
+}
+
+.add-link,
+.back-link{
+    text-decoration:none;
+    background:#007bff;
+    color:white;
+    padding:10px 15px;
+    border-radius:5px;
+}
+
+.habit-card{
+    background:white;
+    padding:15px;
+    margin:15px 0;
+    border-radius:10px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.2);
+}
+
+input{
+    width:300px;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+button{
+    padding:10px 15px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    margin:5px;
+}
+
+button:first-of-type{
+    background:green;
+    color:white;
+}
+
+button:last-of-type{
+    background:red;
+    color:white;
+}
+
+.completed{
+    color:green;
+    font-weight:bold;
+}
+
+.pending{
+    color:red;
+    font-weight:bold;
+}
