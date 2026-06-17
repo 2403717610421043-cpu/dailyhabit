@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const path = require("path");
 const { createClient } = require("@supabase/supabase-js");
 
 dotenv.config();
@@ -9,8 +10,21 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public"));
 
+// Serve HTML and CSS files from root folder
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+app.get("/add.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "add.html"));
+});
+
+app.get("/style.css", (req, res) => {
+  res.sendFile(path.join(__dirname, "style.css"));
+});
+
+// Supabase Connection
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
@@ -29,7 +43,7 @@ app.get("/habits", async (req, res) => {
   res.json(data);
 });
 
-// Add new habit
+// Add habit
 app.post("/habits", async (req, res) => {
   const { habit_name } = req.body;
 
@@ -50,13 +64,15 @@ app.post("/habits", async (req, res) => {
   res.json(data);
 });
 
-// Mark habit as completed
+// Complete habit
 app.put("/habits/:id", async (req, res) => {
   const id = req.params.id;
 
   const { data, error } = await supabase
     .from("habits")
-    .update({ completed: true })
+    .update({
+      completed: true
+    })
     .eq("id", id)
     .select();
 
@@ -85,9 +101,9 @@ app.delete("/habits/:id", async (req, res) => {
   });
 });
 
-// Start server
-const PORT = 3000;
+// Start Server
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
