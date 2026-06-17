@@ -11,7 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve HTML and CSS files from root folder
+// Serve HTML Files
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
@@ -30,7 +30,7 @@ const supabase = createClient(
   process.env.SUPABASE_KEY
 );
 
-// Get all habits
+// Get All Habits
 app.get("/habits", async (req, res) => {
   const { data, error } = await supabase
     .from("habits")
@@ -43,7 +43,7 @@ app.get("/habits", async (req, res) => {
   res.json(data);
 });
 
-// Add habit
+// Add Habit
 app.post("/habits", async (req, res) => {
   const { habit_name } = req.body;
 
@@ -64,7 +64,7 @@ app.post("/habits", async (req, res) => {
   res.json(data);
 });
 
-// Complete habit
+// Complete Habit
 app.put("/habits/:id", async (req, res) => {
   const id = req.params.id;
 
@@ -83,7 +83,7 @@ app.put("/habits/:id", async (req, res) => {
   res.json(data);
 });
 
-// Delete habit
+// Delete Habit
 app.delete("/habits/:id", async (req, res) => {
   const id = req.params.id;
 
@@ -102,8 +102,8 @@ app.delete("/habits/:id", async (req, res) => {
 });
 
 // Start Server
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });
