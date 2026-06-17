@@ -54,20 +54,20 @@
         }
 
         async function completeHabit(id) {
-            await fetch(/habits/${id}, {
-                method: "PUT"
-            });
+    await fetch(`/habits/${id}`, {
+        method: "PUT"
+    });
 
-            location.reload();
-        }
+    location.reload();
+}
 
-        async function deleteHabit(id) {
-            await fetch(/habits/${id}, {
-                method: "DELETE"
-            });
+async function deleteHabit(id) {
+    await fetch(`/habits/${id}`, {
+        method: "DELETE"
+    });
 
-            location.reload();
-        }
+    location.reload();
+}
 
         loadHabits();
     </script>
