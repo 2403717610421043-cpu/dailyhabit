@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HabitFlow - Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+
+    <nav class="dashboard-nav">
+
+        <div class="logo">
+            HabitFlow
+        </div>
+
+        <div class="dashboard-user">
+
+            <span id="username">
+                Hi, User 👋
+            </span>
+
+            <button onclick="logout()" class="logout-button">
+                Logout
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Main Dashboard -->
+
+    <main class="dashboard-container">
+
+        <div class="dashboard-heading">
+
+            <div>
+
+                <h1>Your Habit Dashboard</h1>
+
+                <p>
+                    Stay consistent and build better habits every day.
+                </p>
+
+            </div>
+
+            <a href="add.html" class="add-habit-button">
+                + Add Habit
+            </a>
+
+        </div>
+
+
+        <!-- Statistics -->
+
+        <div class="stats-container">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    📋
+                </div>
+
+                <div>
+                    <h3 id="totalHabits">0</h3>
+                    <p>Total Habits</p>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ✅
+                </div>
+
+                <div>
+                    <h3 id="completedHabits">0</h3>
+                    <p>Completed</p>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⏳
+                </div>
+
+                <div>
+                    <h3 id="pendingHabits">0</h3>
+                    <p>Pending</p>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    📊
+                </div>
+
+                <div>
+                    <h3 id="progress">0%</h3>
+                    <p>Progress</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Habits Section -->
+
+        <section class="habits-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>My Habits</h2>
+
+                    <p>
+                        Manage your daily habits
+                    </p>
+
+                </div>
+
+                <a href="add.html" class="small-add-button">
+                    + Add Habit
+                </a>
+
+            </div>
+
+
+            <div id="habits">
+
+                <div class="loading">
+                    Loading habits...
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        // Load username
+
+        async function loadUser() {
+
+            try {
+
+                const response =
+                    await fetch("/user");
+
+                if (!response.ok) {
+
+                    window.location.href = "login.html";
+
+                    return;
+                }
+
+                const user =
+                    await response.json();
+
+                document.getElementById("username").textContent =
+                    "Hi, " + user.username + " 👋";
+
+            }
+            catch (error) {
+
+                window.location.href = "login.html";
+
+            }
+
+        }
+
+
+        // Load habits
+
+        async function loadHabits() {
+
+            try {
+
+                const response =
+                    await fetch("/habits");
+
+                if (!response.ok) {
+
+                    window.location.href = "login.html";
+
+                    return;
+                }
+
+                const habits =
+                    await response.json();
+
+
+                const habitsContainer =
+                    document.getElementById("habits");
+
+
+                document.getElementById("totalHabits").textContent =
+                    habits.length;
+
+
+                const completed =
+                    habits.filter(habit => habit.completed).length;
+
+
+                const pending =
+                    habits.length - completed;
+
+
+                const percentage =
+                    habits.length === 0
+                        ? 0
+                        : Math.round((completed / habits.length) * 100);
+
+
+                document.getElementById("completedHabits").textContent =
+                    completed;
+
+
+                document.getElementById("pendingHabits").textContent =
+                    pending;
+
+
+                document.getElementById("progress").textContent =
+                    percentage + "%";
+
+
+                if (habits.length === 0) {
+
+                    habitsContainer.innerHTML = `
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                📝
+                            </div>
+
+                            <h3>No habits yet</h3>
+
+                            <p>
+                                Start your journey by adding your first habit.
+                            </p>
+
+                            <a href="add.html" class="add-habit-button">
+                                + Add Your First Habit
+                            </a>
+
+                        </div>
+
+                    `;
+
+                    return;
+                }
+
+
+                let output = "";
+
+
+                habits.forEach(function (habit) {
+
+                    output += `
+
+                        <div class="habit-item">
+
+                            <div class="habit-info">
+
+                                <div class="habit-check">
+
+                                    ${habit.completed
+                            ? "✅"
+                            : "⭕"
+                        }
+
+                                </div>
+
+                                <div>
+
+                                    <h3>
+                                        ${habit.habit_name}
+                                    </h3>
+
+                                    <p class="${habit.completed
+                            ? "completed-text"
+                            : "pending-text"
+                        }">
+
+                                        ${habit.completed
+                            ? "Completed"
+                            : "Pending"
+                        }
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="habit-actions">
+
+                                ${habit.completed
+
+                            ?
+                            `<button
+                                        class="completed-button"
+                                        disabled>
+                                        ✓ Completed
+                                    </button>`
+
+                            :
+
+                            `<button
+                                        class="complete-button"
+                                        onclick="completeHabit(${habit.id})">
+                                        Complete
+                                    </button>`
+                        }
+
+
+                                <button
+                                    class="delete-button"
+                                    onclick="deleteHabit(${habit.id})">
+                                    Delete
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                });
+
+
+                habitsContainer.innerHTML = output;
+
+            }
+            catch (error) {
+
+                document.getElementById("habits").innerHTML = `
+
+                    <div class="error-box">
+                        Unable to load habits.
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+        // Complete habit
+
+        async function completeHabit(id) {
+
+            try {
+
+                const response =
+                    await fetch("/habits/" + id, {
+
+                        method: "PUT"
+
+                    });
+
+
+                if (response.ok) {
+
+                    loadHabits();
+
+                }
+                else {
+
+                    alert("Unable to complete habit.");
+
+                }
+
+            }
+            catch (error) {
+
+                alert("Server error.");
+
+            }
+
+        }
+
+
+        // Delete habit
+
+        async function deleteHabit(id) {
+
+            const confirmDelete =
+                confirm("Are you sure you want to delete this habit?");
+
+
+            if (!confirmDelete) {
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch("/habits/" + id, {
+
+                        method: "DELETE"
+
+                    });
+
+
+                if (response.ok) {
+
+                    loadHabits();
+
+                }
+                else {
+
+                    alert("Unable to delete habit.");
+
+                }
+
+            }
+            catch (error) {
+
+                alert("Server error.");
+
+            }
+
+        }
+
+
+        // Logout
+
+        async function logout() {
+
+            try {
+
+                await fetch("/logout", {
+
+                    method: "POST"
+
+                });
+
+                window.location.href = "login.html";
+
+            }
+            catch (error) {
+
+                window.location.href = "login.html";
+
+            }
+
+        }
+
+
+        // Start dashboard
+
+        loadUser();
+
+        loadHabits();
+
+    </script>
+
+</body>
+
+</html>

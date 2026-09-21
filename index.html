@@ -1,76 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Habit Tracker</title>
+
+    <title>HabitFlow - Store Your Habits</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <div class="container">
-        <h1>📅 Daily Habit Tracker</h1>
+    <nav class="navbar">
 
-        <a href="add.html" class="add-link">
-            + Add New Habit
-        </a>
+        <div class="logo">
+            HabitFlow
+        </div>
 
-        <div id="habits"></div>
-    </div>
+        <div class="nav-links">
+            <a href="login.html">Login</a>
 
-    <script>
-        async function loadHabits() {
-            const res = await fetch("/habits");
-            const habits = await res.json();
+            <a href="register.html" class="nav-button">
+                Get Started
+            </a>
+        </div>
 
-            let output = "";
+    </nav>
 
-            habits.forEach(habit => {
-                output += `
-                <div class="habit-card">
-                    <h3>${habit.habit_name}</h3>
 
-                    <p>
-                        Status:
-                        ${
-                            habit.completed
-                            ? "<span class='completed'>✅ Completed</span>"
-                            : "<span class='pending'>❌ Pending</span>"
-                        }
-                    </p>
+    <section class="hero">
 
-                    <button onclick="completeHabit(${habit.id})">
-                        Complete
-                    </button>
+        <div class="hero-content">
 
-                    <button onclick="deleteHabit(${habit.id})">
-                        Delete
-                    </button>
-                </div>
-                `;
-            });
+            <div class="badge">
+                ✨ Build better habits every day
+            </div>
 
-            document.getElementById("habits").innerHTML = output;
-        }
+            <h1>
+                Store Your Habits.
+                <span>Build Your Future.</span>
+            </h1>
 
-        async function completeHabit(id) {
-    await fetch(`/habits/${id}`, {
-        method: "PUT"
-    });
+            <p>
+                Track your daily habits, stay consistent,
+                and build a better version of yourself one day at a time.
+            </p>
 
-    location.reload();
-}
+            <div class="hero-buttons">
 
-async function deleteHabit(id) {
-    await fetch(`/habits/${id}`, {
-        method: "DELETE"
-    });
+                <a href="register.html" class="primary-button">
+                    Start Tracking →
+                </a>
 
-    location.reload();
-}
+                <a href="login.html" class="secondary-button">
+                    Login
+                </a>
 
-        loadHabits();
-    </script>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="features">
+
+        <div class="feature-card">
+
+            <div class="feature-icon">➕</div>
+
+            <h3>Add Habits</h3>
+
+            <p>
+                Create and store your daily habits easily.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">✅</div>
+
+            <h3>Track Progress</h3>
+
+            <p>
+                Mark habits as completed and monitor your progress.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">📊</div>
+
+            <h3>Stay Consistent</h3>
+
+            <p>
+                See your completed and pending habits in one place.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+
+        <p>
+            © 2026 HabitFlow. Build consistency every day.
+        </p>
+
+    </footer>
 
 </body>
+
 </html>

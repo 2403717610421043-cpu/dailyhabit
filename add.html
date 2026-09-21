@@ -1,61 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Habit</title>
+
+    <title>HabitFlow - Add Habit</title>
+
     <link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
 
-    <div class="container">
+    <!-- Navigation -->
 
-        <h1>➕ Add New Habit</h1>
+    <nav class="dashboard-nav">
 
-        <input
-            type="text"
-            id="habit"
-            placeholder="Enter Habit Name"
-        >
+        <div class="logo">
+            HabitFlow
+        </div>
 
-        <br><br>
+        <div class="dashboard-user">
 
-        <button onclick="addHabit()">
-            Add Habit
-        </button>
+            <span id="username">
+                Hi, User 👋
+            </span>
 
-        <br><br>
+            <button onclick="logout()" class="logout-button">
+                Logout
+            </button>
 
-        <a href="index.html" class="back-link">
-            ← Back to Dashboard
-        </a>
+        </div>
 
-    </div>
+    </nav>
+
+
+    <!-- Add Habit -->
+
+    <main class="add-container">
+
+        <div class="add-card">
+
+            <div class="add-icon">
+                ➕
+            </div>
+
+            <h1>Add New Habit</h1>
+
+            <p>
+                Create a habit and start building consistency.
+            </p>
+
+
+            <form id="habitForm">
+
+                <label for="habit">
+                    Habit Name
+                </label>
+
+                <input type="text" id="habit" placeholder="Example: Drink 2L of water" maxlength="100" required>
+
+
+                <button type="submit" class="auth-button">
+                    Add Habit
+                </button>
+
+            </form>
+
+
+            <p id="message"></p>
+
+
+            <a href="dashboard.html" class="back-dashboard">
+                ← Back to Dashboard
+            </a>
+
+        </div>
+
+    </main>
+
 
     <script>
-        async function addHabit() {
 
-            const habit_name =
-            document.getElementById("habit").value;
+        // Load username
 
-            if(habit_name === ""){
-                alert("Please enter a habit name");
-                return;
+        async function loadUser() {
+
+            try {
+
+                const response =
+                    await fetch("/user");
+
+
+                if (!response.ok) {
+
+                    window.location.href =
+                        "login.html";
+
+                    return;
+
+                }
+
+
+                const user =
+                    await response.json();
+
+
+                document.getElementById("username").textContent =
+                    "Hi, " + user.username + " 👋";
+
+            }
+            catch (error) {
+
+                window.location.href =
+                    "login.html";
+
             }
 
-            await fetch("/habits", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    habit_name
-                })
+        }
+
+
+        // Add habit
+
+        document
+            .getElementById("habitForm")
+            .addEventListener("submit", async function (event) {
+
+                event.preventDefault();
+
+
+                const habitName =
+                    document
+                        .getElementById("habit")
+                        .value
+                        .trim();
+
+
+                const message =
+                    document.getElementById("message");
+
+
+                if (habitName === "") {
+
+                    message.textContent =
+                        "Please enter a habit name.";
+
+                    message.className =
+                        "error-message";
+
+                    return;
+
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch("/habits", {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                habit_name:
+                                    habitName
+
+                            })
+
+                        });
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        message.textContent =
+                            result.message ||
+                            "Unable to add habit.";
+
+                        message.className =
+                            "error-message";
+
+                        return;
+
+                    }
+
+
+                    message.textContent =
+                        "Habit added successfully!";
+
+                    message.className =
+                        "success-message";
+
+
+                    document
+                        .getElementById("habit")
+                        .value = "";
+
+
+                    setTimeout(function () {
+
+                        window.location.href =
+                            "dashboard.html";
+
+                    }, 800);
+
+                }
+                catch (error) {
+
+                    message.textContent =
+                        "Unable to connect to the server.";
+
+                    message.className =
+                        "error-message";
+
+                }
+
             });
 
-            window.location.href = "/";
+
+        // Logout
+
+        async function logout() {
+
+            try {
+
+                await fetch("/logout", {
+
+                    method: "POST"
+
+                });
+
+            }
+            catch (error) {
+                // Continue to login page
+            }
+
+
+            window.location.href =
+                "login.html";
+
         }
+
+
+        loadUser();
+
     </script>
 
 </body>
+
 </html>
